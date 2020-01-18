@@ -3,7 +3,6 @@ package com.capgemini.tdd.services.game;
 import com.capgemini.tdd.core.data.Board;
 import com.capgemini.tdd.core.data.BoardStatusEnum;
 import com.capgemini.tdd.core.data.Point;
-import com.capgemini.tdd.core.service.BoardBuilder;
 import com.capgemini.tdd.core.service.impl.BoardBuilderImpl;
 import com.capgemini.tdd.dao.entities.BoardBE;
 import com.capgemini.tdd.dao.entities.MatchResultBE;
@@ -15,13 +14,7 @@ import com.capgemini.tdd.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
@@ -71,25 +64,28 @@ public class GameServiceMockTest
 
         Mockito.doReturn(board).when(boardBuilder).buildBoard(Mockito.anyLong());
 
-        UserBE userMock = Mockito.mock(UserBE.class);
-        Mockito.doReturn("").when(userMock).getName();
-        Mockito.when(userService.findByName(Mockito.anyString())).thenReturn(userMock);
+        UserBE userMockOne = Mockito.mock(UserBE.class);
+        UserBE userMockTwo = Mockito.mock(UserBE.class);
+        Mockito.doReturn("Kasztan").when(userMockOne).getName();
+        Mockito.doReturn("Andrzej").when(userMockTwo).getName();
+
+        Mockito.when(userService.findByName(Mockito.anyString())).thenReturn(userMockOne);
         Mockito.doReturn(matchResultMock).when(matchResultService).save(Mockito.any(MatchResultBE.class));
 
         BoardBE boardMock = Mockito.mock(BoardBE.class);
         Mockito.when(boardService.findById(Mockito.anyLong())).thenReturn(boardMock);
-        Mockito.doReturn(userMock).when(boardMock).getPlayerOne();
-        Mockito.doReturn(userMock).when(boardMock).getPlayerTwo();
+        Mockito.doReturn(userMockOne).when(boardMock).getPlayerOne();
+        Mockito.doReturn(userMockTwo).when(boardMock).getPlayerTwo();
 
         //when
-        BoardStatusEnum boardStatus = gameService.makeMove(1000L, 2000L, 2000L, "FakeName", "O");
+        BoardStatusEnum boardStatus = gameService.makeMove(1000L, 2L, 2L, "Kasztan", "O");
 
         //then
         Mockito.verify(moveService)
                .makeMove(captorForLong.capture(), captorForLong.capture(), captorForLong.capture(), captorForString.capture(),
                          captorForString.capture());
-        Assert.assertEquals(Arrays.asList(1000L, 2000L, 2000L), captorForLong.getAllValues());
-        Assert.assertEquals(Arrays.asList("FakeName", "O"), captorForString.getAllValues());
+        Assert.assertEquals(Arrays.asList(1000L, 2L, 2L), captorForLong.getAllValues());
+        Assert.assertEquals(Arrays.asList("Kasztan", "O"), captorForString.getAllValues());
         Assert.assertEquals(BoardStatusEnum.DRAW, boardStatus);
         Mockito.verify(userService, Mockito.times(2)).findByName(Mockito.anyString());
     }

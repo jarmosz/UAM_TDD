@@ -6,6 +6,7 @@ public class BoardBE
     private UserBE playerOne;
     private UserBE playerTwo;
 
+
     public BoardBE(final UserBE pPlayerOne, final UserBE pPlayerTwo)
     {
         playerOne = pPlayerOne;

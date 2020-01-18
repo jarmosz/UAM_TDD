@@ -12,11 +12,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BoardInspector
+public class BoardInspectorImpl
 {
 
     private static final int BOARD_SIZE = 3;
     private static final int DIAGONAL_SUM = 4;
+
+    public static int getBoardSize(){
+        return BOARD_SIZE;
+    }
+
+    public static int getDiagonalSum(){
+        return DIAGONAL_SUM;
+    }
 
     public static WinEnum validate(@Nonnull final Board board, @Nonnull final MoveValueEnum moveValue)
     {
